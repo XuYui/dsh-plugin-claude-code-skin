@@ -1,0 +1,1078 @@
+/* ==========================================================================
+   Claude-style skin for the DeepSeek Harness web GUI
+   --------------------------------------------------------------------------
+   Every rule is anchored to `html[data-dsh-cc-skin]`, an attribute the plugin's
+   browser half sets while it is mounted. Removing the plugin removes the
+   attribute, and the stock DSH theme returns with no residue.
+
+   Structure:
+     1. Palettes            – light (the reference look) and its dark mirror
+     2. Token remap         – `--dsw-*` values re-pointed at the palette
+     3. Shell               – sidebar, header, view tabs
+     4. Conversation        – bubbles, markdown, thinking, tool cards, turn tail
+     5. Composer            – the rounded input card and its status line
+     6. Right sidebar       – environment / context / outputs / changes
+     7. Overlays            – menus, dialogs, chips, buttons
+     8. Hero                – greeting and the usage overview card
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Palettes
+   ========================================================================== */
+
+html[data-dsh-cc-skin] {
+  /* --- light: the reference screenshots ---------------------------------- */
+  --cc-bg: #fcfcf8;
+  --cc-panel: #f9f9f5;
+  --cc-elev: #ffffff;
+  --cc-inset: #f6f5f0;
+  --cc-card: #f8f7f3;
+  --cc-tile: #f1f0eb;
+  --cc-hover: #f0efe9;
+  --cc-active: #eceae3;
+  --cc-bubble: #f2f0ea;
+  --cc-badge: #eeede8;
+  --cc-text: #1f1e1b;
+  --cc-text-2: #6c6a62;
+  --cc-text-3: #98968d;
+  --cc-line: #e9e7e0;
+  --cc-line-soft: #f1efe9;
+  --cc-line-strong: #dcd9d1;
+  --cc-tabbar: #f1efe9;
+  --cc-accent: #4a6cf7;
+  --cc-accent-soft: #eef1fe;
+  --cc-heat-0: #eceae4;
+  --cc-heat-1: #c7d3fb;
+  --cc-heat-2: #93aaf7;
+  --cc-heat-3: #4a6cf7;
+  --cc-shadow: 0 1px 2px rgba(28, 27, 24, 0.05);
+  --cc-shadow-lg: 0 12px 32px rgba(28, 27, 24, 0.12);
+  --cc-radius-card: 12px;
+  --cc-radius-control: 8px;
+  --cc-radius-input: 18px;
+  --cc-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI",
+    Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei",
+    system-ui, sans-serif;
+  --cc-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    Georgia, "Songti SC", SimSun, "Times New Roman", serif;
+  --cc-mono: "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas,
+    "DejaVu Sans Mono", "Liberation Mono", "PingFang SC", "Microsoft YaHei", monospace;
+}
+
+html[data-dsh-cc-skin] body[data-ds-dark-theme] {
+  /* --- dark: the same layout on a warm charcoal ------------------------- */
+  --cc-bg: #262624;
+  --cc-panel: #1f1e1d;
+  --cc-elev: #30302e;
+  --cc-inset: #2b2a28;
+  --cc-card: #2b2a28;
+  --cc-tile: #33322e;
+  --cc-hover: #34332f;
+  --cc-active: #3b3a35;
+  --cc-bubble: #35342f;
+  --cc-badge: #3a3935;
+  --cc-text: #f3f1ea;
+  --cc-text-2: #b6b3a8;
+  --cc-text-3: #8a877d;
+  --cc-line: #3b3a35;
+  --cc-line-soft: #33322e;
+  --cc-line-strong: #4a4944;
+  --cc-tabbar: #33322e;
+  --cc-accent: #93aaf7;
+  --cc-accent-soft: #2f3550;
+  --cc-heat-0: #33322e;
+  --cc-heat-1: #3d4a7a;
+  --cc-heat-2: #5f74c4;
+  --cc-heat-3: #93aaf7;
+  --cc-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --cc-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ==========================================================================
+   2. Token remap
+   ========================================================================== */
+
+html[data-dsh-cc-skin] body {
+  --dsw-alias-bg-base: var(--cc-bg) !important;
+  --dsw-alias-bg-layer-1: var(--cc-elev) !important;
+  --dsw-alias-bg-layer-2: var(--cc-elev) !important;
+  --dsw-alias-bg-layer-3: var(--cc-hover) !important;
+  --dsw-alias-bg-overlay: var(--cc-elev) !important;
+  --dsw-specific-sidebar-fill: var(--cc-panel) !important;
+  --dsw-specific-bubble: var(--cc-bubble) !important;
+  --dsw-specific-bubble-highlight: var(--cc-hover) !important;
+  --dsw-specific-menu: var(--cc-elev) !important;
+  --dsw-specific-input-major: var(--cc-elev) !important;
+  --dsw-specific-selector: var(--cc-inset) !important;
+  --dsw-specific-tip: var(--cc-elev) !important;
+  --dsw-alias-settings-card-fill: var(--cc-elev) !important;
+  --dsw-alias-settings-card-stroke: var(--cc-line) !important;
+  --dsw-alias-menu-surface-fill: var(--cc-elev) !important;
+  --dsw-alias-menu-group-header-fill: var(--cc-panel) !important;
+  --dsw-alias-turn-trigger-bg: var(--cc-elev) !important;
+  --dsw-alias-turn-trigger-bg-hover: var(--cc-hover) !important;
+  --dsw-alias-toast-bg: var(--cc-elev) !important;
+  --dsw-alias-toast-label: var(--cc-text) !important;
+  --dsw-alias-tooltip-bg: var(--cc-text) !important;
+  --dsw-alias-tooltip-key-bg: #ffffff26 !important;
+
+  --dsw-alias-label-primary: var(--cc-text) !important;
+  --dsw-alias-label-primary-bluish: var(--cc-text) !important;
+  --dsw-alias-label-secondary: var(--cc-text-2) !important;
+  --dsw-alias-label-tertiary: var(--cc-text-2) !important;
+  --dsw-alias-label-caption: var(--cc-text-3) !important;
+  --dsw-alias-label-dimmed: var(--cc-text-3) !important;
+  --dsw-alias-label-primary-dimmed: var(--cc-text-2) !important;
+  --dsw-alias-label-shimmer: var(--cc-text-3) !important;
+  --dsw-alias-label-deep-diving: var(--cc-text-2) !important;
+  --dsw-alias-label-deep-diving-shimmer: var(--cc-accent) !important;
+  --dsw-alias-menu-icon: var(--cc-text-2) !important;
+
+  --dsw-alias-border-l1: var(--cc-line-soft) !important;
+  --dsw-alias-border-l2: var(--cc-line) !important;
+  --dsw-alias-border-l3: var(--cc-line) !important;
+  --dsw-alias-border-l4: var(--cc-line-strong) !important;
+  --dsw-alias-border-l2-darkmode-thin: var(--cc-line) !important;
+
+  --dsw-alias-brand-primary: var(--cc-text) !important;
+  --dsw-alias-brand-text: var(--cc-text) !important;
+  --dsw-alias-link: var(--cc-accent) !important;
+
+  --dsw-alias-interactive-bg-hover: var(--cc-hover) !important;
+  --dsw-alias-interactive-bg-hover-solid: var(--cc-hover) !important;
+  --dsw-alias-interactive-bg-hover-accent: var(--cc-accent-soft) !important;
+  --dsw-alias-interactive-bg-active: var(--cc-active) !important;
+
+  --dsw-alias-markdown-code-block: var(--cc-inset) !important;
+  --dsw-alias-markdown-code-block-banner: var(--cc-card) !important;
+  --dsw-alias-markdown-inline-code: var(--cc-inset) !important;
+  --dsw-alias-markdown-code-segment-selected: var(--cc-elev) !important;
+  --dsw-alias-markdown-code-segment-unselected: transparent !important;
+
+  --dsw-alias-button-primary-dimmed: var(--cc-text-3) !important;
+  --dsw-alias-button-ghost-active-fill: var(--cc-hover) !important;
+  --dsw-alias-button-ghost-active-hover: var(--cc-active) !important;
+  --dsw-alias-button-ghost-active-border: var(--cc-line) !important;
+  --dsw-alias-button-tool-bar-hover: var(--cc-hover) !important;
+
+  --dsw-alias-scrollbar-bg-l1: transparent !important;
+  --dsw-alias-scrollbar-bg-l2: transparent !important;
+  --dsw-alias-scrollbar-hover-l1: var(--cc-line-strong) !important;
+  --dsw-alias-scrollbar-hover-l2: var(--cc-line-strong) !important;
+
+  --dsw-shadow-lv1: var(--cc-shadow) !important;
+  --dsw-elevation-stroke-color: var(--cc-line) !important;
+  --dsw-elevation-panel: var(--cc-shadow) !important;
+  --dsw-elevation-prominent: var(--cc-shadow-lg) !important;
+  --dsw-elevation-soft: var(--cc-shadow) !important;
+
+  background-color: var(--cc-bg) !important;
+  color: var(--cc-text) !important;
+  font-family: var(--cc-sans) !important;
+  font-size: 14px !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   3. Shell
+   ========================================================================== */
+
+html[data-dsh-cc-skin] body [data-slot="sidebar"] > *,
+html[data-dsh-cc-skin] body [class*="sidebarCol"] {
+  background: var(--cc-panel) !important;
+  border-right: 1px solid var(--cc-line) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] {
+  font-size: 13px !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] button {
+  border-radius: var(--cc-radius-control) !important;
+  color: var(--cc-text-2) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] button:hover {
+  background: var(--cc-hover) !important;
+  color: var(--cc-text) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] :is(h1, h2, h3, [class*="groupLabel"], [class*="sectionTitle"], [class*="workspacesLabel"]) {
+  color: var(--cc-text-3) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [role="treeitem"],
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [data-row-key] {
+  border-radius: var(--cc-radius-control) !important;
+  font-size: 13px !important;
+  color: var(--cc-text-2) !important;
+  min-height: 28px !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [role="treeitem"]:hover,
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [data-row-key]:hover {
+  background: var(--cc-hover) !important;
+  color: var(--cc-text) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [role="treeitem"][aria-selected="true"],
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [role="treeitem"][data-active="true"],
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [class*="sessionRow"][class*="selected"],
+html[data-dsh-cc-skin] body [data-slot="sidebar"] [class*="sessionRow"][class*="Active"] {
+  background: var(--cc-active) !important;
+  color: var(--cc-text) !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] :is([class*="time"], [class*="Time"], [class*="meta"]) {
+  color: var(--cc-text-3) !important;
+  font-size: 11px !important;
+}
+
+html[data-dsh-cc-skin] body [data-slot="conversation.header"],
+html[data-dsh-cc-skin] body header {
+  background: var(--cc-bg) !important;
+  border-bottom: 1px solid var(--cc-line-soft) !important;
+}
+html[data-dsh-cc-skin] body [data-conversation-header-leading],
+html[data-dsh-cc-skin] body [data-slot="conversation.session.header"] {
+  color: var(--cc-text) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+}
+html[data-dsh-cc-skin] body [data-conversation-header-leading] button,
+html[data-dsh-cc-skin] body [data-conversation-header-corner] button,
+html[data-dsh-cc-skin] body [data-slot="conversation.header"] button {
+  color: var(--cc-text-2) !important;
+  border-radius: var(--cc-radius-control) !important;
+}
+html[data-dsh-cc-skin] body [role="tablist"] button {
+  background: transparent !important;
+  color: var(--cc-text-3) !important;
+  font-size: 13px !important;
+  border-radius: 0 !important;
+  box-shadow: inset 0 -2px 0 transparent !important;
+}
+html[data-dsh-cc-skin] body [role="tablist"] button[aria-selected="true"] {
+  color: var(--cc-text) !important;
+  box-shadow: inset 0 -2px 0 var(--cc-text) !important;
+}
+
+/* ==========================================================================
+   4. Conversation
+   ========================================================================== */
+
+html[data-dsh-cc-skin] body [data-chat-flow] {
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+}
+
+/* User turn: the soft right-aligned bubble. */
+html[data-dsh-cc-skin] body [data-chat-flow-kind="user"] [class*="bubble"] {
+  background: var(--cc-bubble) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+  box-shadow: none !important;
+  color: var(--cc-text) !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+}
+html[data-dsh-cc-skin] body [data-chat-flow-kind="user"] [class*="_actions"] {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+html[data-dsh-cc-skin] body [data-chat-flow-kind="user"]:hover [class*="_actions"] {
+  opacity: 1;
+}
+html[data-dsh-cc-skin] body [data-chat-flow-kind="user"] :is([class*="timeStart"], [class*="timeEnd"]) {
+  color: var(--cc-text-3) !important;
+  font-size: 11px !important;
+}
+
+/* Assistant text. */
+html[data-dsh-cc-skin] body [class*="_markdown_"] {
+  color: var(--cc-text) !important;
+  font-size: 14px !important;
+  line-height: 1.72 !important;
+  font-family: var(--cc-sans) !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] :is(h1, h2, h3, h4) {
+  color: var(--cc-text) !important;
+  font-family: var(--cc-sans) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  margin: 1.2em 0 0.5em !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] h1 {
+  font-size: 18px !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] h2 {
+  font-size: 16px !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] h3 {
+  font-size: 15px !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] :is(ul, ol) {
+  padding-left: 1.5em !important;
+  margin: 0.55em 0 !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] li {
+  margin: 0.2em 0 !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] li::marker {
+  color: var(--cc-text-3) !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] a {
+  color: var(--cc-accent) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] :not(pre) > code {
+  background: var(--cc-inset) !important;
+  border: 1px solid var(--cc-line) !important;
+  border-radius: 5px !important;
+  padding: 0.1em 0.35em !important;
+  font-family: var(--cc-mono) !important;
+  font-size: 12.5px !important;
+  color: var(--cc-text) !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] pre {
+  background: var(--cc-inset) !important;
+  border: 1px solid var(--cc-line) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  padding: 12px 14px !important;
+  font-size: 12.5px !important;
+  line-height: 1.6 !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] pre code {
+  background: transparent !important;
+  border: 0 !important;
+  font-family: var(--cc-mono) !important;
+  font-size: 12.5px !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] blockquote {
+  border-left: 2px solid var(--cc-line-strong) !important;
+  background: transparent !important;
+  color: var(--cc-text-2) !important;
+  padding: 0 0 0 14px !important;
+  margin: 0.8em 0 !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] :is(th, td) {
+  border: 1px solid var(--cc-line) !important;
+  padding: 6px 12px !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] th {
+  background: var(--cc-card) !important;
+  font-weight: 600 !important;
+}
+html[data-dsh-cc-skin] body [class*="_markdown_"] hr {
+  border: 0 !important;
+  border-top: 1px solid var(--cc-line) !important;
+  margin: 1.2em 0 !important;
+}
+
+/* Thinking / process rows: a quiet label over an indented run. */
+html[data-dsh-cc-skin] body [data-step-process] > div > [class*="_title"],
+html[data-dsh-cc-skin] body [data-step-process] [data-disclosure-header] {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 2px 0 !important;
+  font-size: 13px !important;
+  color: var(--cc-text-3) !important;
+}
+html[data-dsh-cc-skin] body [data-step-process] [class*="_label"] {
+  color: var(--cc-text-3) !important;
+  font-style: normal !important;
+}
+html[data-dsh-cc-skin] body [data-step-process-body] {
+  border-left: 2px solid var(--cc-line) !important;
+  border-radius: 0 !important;
+  margin: 2px 0 8px 4px !important;
+  padding: 2px 0 2px 14px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body [data-step-process] > div > [class*="_body"] {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body [data-step-process] [class*="activityIcon"],
+html[data-dsh-cc-skin] body [data-step-process] [data-step-process-icon] {
+  color: var(--cc-text-3) !important;
+}
+
+/* Tool calls: a card per call, the command and its output on inset surfaces. */
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] > [data-tool] {
+  border: 1px solid var(--cc-line) !important;
+  border-radius: var(--cc-radius-card) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 2px !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [data-disclosure-row] {
+  border-radius: 8px !important;
+  min-height: 30px !important;
+  padding: 2px 6px !important;
+  color: var(--cc-text) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [data-disclosure-row]:hover {
+  background: var(--cc-hover) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_title_"] {
+  color: var(--cc-text) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_summary"],
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="fileLink"] {
+  color: var(--cc-text-2) !important;
+  font-size: 12.5px !important;
+  font-family: var(--cc-mono) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_leading_"],
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="chevron"] {
+  color: var(--cc-text-3) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="bodyWrap"],
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="terminalBody"],
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="ioCard"] {
+  margin: 2px 0 0 !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: var(--cc-inset) !important;
+  box-shadow: none !important;
+  padding: 8px 10px !important;
+  font-family: var(--cc-mono) !important;
+  font-size: 12px !important;
+  color: var(--cc-text-2) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_promptLine_"] {
+  font-family: var(--cc-mono) !important;
+  font-size: 12px !important;
+  color: var(--cc-text) !important;
+  gap: 6px !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_cwd_"] {
+  color: var(--cc-text-3) !important;
+  font-size: 11px !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_command_"] {
+  font-family: var(--cc-mono) !important;
+  font-size: 12px !important;
+  color: var(--cc-text) !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_line_"],
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] pre {
+  font-family: var(--cc-mono) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  color: var(--cc-text-2) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="_copyButton_"],
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="inspectButton"] {
+  color: var(--cc-text-3) !important;
+  font-size: 11px !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] [class*="ioLabel"] {
+  color: var(--cc-text-3) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.02em;
+  text-transform: none !important;
+}
+html[data-dsh-cc-skin] body [data-slot="tool.call.toolview"] img {
+  border-radius: 8px !important;
+  border: 1px solid var(--cc-line) !important;
+}
+html[data-dsh-cc-skin] body [data-variant="think"] {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Running indicator. */
+html[data-dsh-cc-skin] body [data-chat-running] {
+  color: var(--cc-text-3) !important;
+  font-size: 13px !important;
+}
+html[data-dsh-cc-skin] body [data-chat-running] [class*="runningDivider"] {
+  background: var(--cc-line) !important;
+}
+
+/* Turn tail: the changed-files / delivery cards. */
+html[data-dsh-cc-skin] body [class*="deliverable"] [class*="_card"],
+html[data-dsh-cc-skin] body [class*="changeCard"],
+html[data-dsh-cc-skin] body [class*="turnTail"] > * {
+  background: transparent !important;
+  border: 1px solid var(--cc-line) !important;
+  border-radius: var(--cc-radius-card) !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   5. Composer
+   ========================================================================== */
+
+html[data-dsh-cc-skin] body [data-composer-card] {
+  background: var(--cc-elev) !important;
+  border: 1px solid var(--cc-line) !important;
+  border-radius: var(--cc-radius-input) !important;
+  box-shadow: var(--cc-shadow) !important;
+  padding: 6px 2px 2px !important;
+}
+html[data-dsh-cc-skin] body [data-composer-card]:focus-within {
+  border-color: var(--cc-line-strong) !important;
+  box-shadow: var(--cc-shadow) !important;
+}
+html[data-dsh-cc-skin] body [data-composer-input],
+html[data-dsh-cc-skin] body [data-composer-placeholder] {
+  color: var(--cc-text) !important;
+  font-family: var(--cc-sans) !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+html[data-dsh-cc-skin] body [data-composer-placeholder] {
+  color: var(--cc-text-3) !important;
+}
+html[data-dsh-cc-skin] body [data-composer-card] [class*="_row"] {
+  border-top: 0 !important;
+  padding: 4px 8px 6px !important;
+  margin-top: 0 !important;
+}
+html[data-dsh-cc-skin] body [data-composer-card] [class*="_row"] button {
+  border-radius: var(--cc-radius-control) !important;
+  color: var(--cc-text-2) !important;
+  font-size: 12.5px !important;
+}
+html[data-dsh-cc-skin] body [data-composer-card] [class*="_row"] button:hover {
+  background: var(--cc-hover) !important;
+  color: var(--cc-text) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="conversation.input.model"] button,
+html[data-dsh-cc-skin] body [data-slot="conversation.input.model"] [class*="triggerLabel"],
+html[data-dsh-cc-skin] body [data-slot="conversation.input.permission"] button {
+  color: var(--cc-text-2) !important;
+  font-size: 12.5px !important;
+  text-transform: none !important;
+}
+html[data-dsh-cc-skin] body [data-composer-card] [class*="_trailing"] > div > button,
+html[data-dsh-cc-skin] body [data-composer-card] button[aria-label*="发送"],
+html[data-dsh-cc-skin] body [data-composer-card] button[aria-label*="停止"] {
+  border-radius: 999px !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body [class*="_add_"] {
+  color: var(--cc-text-2) !important;
+  border-radius: 999px !important;
+}
+/* The status line under the box stays quiet. */
+html[data-dsh-cc-skin] body [data-composer-dock] {
+  font-size: 11.5px !important;
+  color: var(--cc-text-3) !important;
+  gap: 2px !important;
+}
+html[data-dsh-cc-skin] body [data-composer-dock] [class*="_pill"] {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 6px !important;
+  font-size: 11.5px !important;
+  color: var(--cc-text-3) !important;
+}
+html[data-dsh-cc-skin] body [data-composer-dock] [class*="_pill"]:hover {
+  color: var(--cc-text-2) !important;
+  background: transparent !important;
+}
+html[data-dsh-cc-skin] body [data-composer-dock] svg {
+  display: none !important;
+}
+html[data-dsh-cc-skin] body [data-composer-dock] * {
+  font-size: 11.5px !important;
+}
+
+/* Workspace / preset chips above the composer. */
+html[data-dsh-cc-skin] body [class*="heroWorkspaceRow"] button,
+html[data-dsh-cc-skin] body [data-slot="conversation.hero.agentPreset"] button,
+html[data-dsh-cc-skin] body [data-slot="conversation.hero.options"] button {
+  border: 1px solid var(--cc-line) !important;
+  border-radius: 999px !important;
+  background: var(--cc-elev) !important;
+  color: var(--cc-text-2) !important;
+  font-size: 12px !important;
+  padding: 3px 10px !important;
+  height: auto !important;
+}
+html[data-dsh-cc-skin] body [class*="heroWorkspaceRow"] button:hover {
+  background: var(--cc-hover) !important;
+  color: var(--cc-text) !important;
+}
+
+/* ==========================================================================
+   6. Right sidebar
+   ========================================================================== */
+
+html[data-dsh-cc-skin] body [data-sidebar-right-panel],
+html[data-dsh-cc-skin] body [data-slot="rightbar"] > * {
+  background: var(--cc-panel) !important;
+  border-left: 1px solid var(--cc-line) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="rightbar"],
+html[data-dsh-cc-skin] body [data-slot="rightbar.session"] {
+  font-size: 13px !important;
+  color: var(--cc-text-2) !important;
+}
+html[data-dsh-cc-skin] body [data-slot="rightbar"] :is(h1, h2, h3, h4, [class*="sectionTitle"], [class*="panelTitle"]) {
+  color: var(--cc-text) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+html[data-dsh-cc-skin] body [data-slot="rightbar"] button {
+  border-radius: var(--cc-radius-control) !important;
+  color: var(--cc-text-2) !important;
+  font-size: 12.5px !important;
+}
+html[data-dsh-cc-skin] body [data-slot="rightbar"] button:hover {
+  background: var(--cc-hover) !important;
+  color: var(--cc-text) !important;
+}
+
+/* ==========================================================================
+   7. Overlays
+   ========================================================================== */
+
+html[data-dsh-cc-skin] body :is([role="menu"], [role="listbox"], [class*="MenuSurface"]) {
+  background: var(--cc-elev) !important;
+  border: 1px solid var(--cc-line) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--cc-shadow-lg) !important;
+  padding: 4px !important;
+}
+html[data-dsh-cc-skin] body :is([role="menuitem"], [role="option"]) {
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  color: var(--cc-text-2) !important;
+}
+html[data-dsh-cc-skin] body :is([role="menuitem"], [role="option"]):hover,
+html[data-dsh-cc-skin] body [role="option"][aria-selected="true"] {
+  background: var(--cc-hover) !important;
+  color: var(--cc-text) !important;
+}
+html[data-dsh-cc-skin] body [role="dialog"] {
+  background: var(--cc-elev) !important;
+  border: 1px solid var(--cc-line) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--cc-shadow-lg) !important;
+}
+html[data-dsh-cc-skin] body [role="dialog"] :is(h1, h2, h3) {
+  color: var(--cc-text) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+}
+html[data-dsh-cc-skin] body [role="dialog"] :is(p, li) {
+  color: var(--cc-text-2) !important;
+  font-size: 13px !important;
+  line-height: 1.7 !important;
+}
+html[data-dsh-cc-skin] body [class*="_tag_"],
+html[data-dsh-cc-skin] body [class*="chip"],
+html[data-dsh-cc-skin] body [class*="pill"] {
+  border-radius: 999px !important;
+  background: var(--cc-badge) !important;
+  border: 0 !important;
+  color: var(--cc-text-2) !important;
+  font-size: 11px !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+html[data-dsh-cc-skin] body button {
+  border-radius: var(--cc-radius-control) !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body :is(kbd, [class*="keycap"]) {
+  background: var(--cc-inset) !important;
+  border: 1px solid var(--cc-line) !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  color: var(--cc-text-2) !important;
+  font-size: 10.5px !important;
+}
+
+/* ==========================================================================
+   8. Hero: greeting and the usage overview card
+   ========================================================================== */
+
+/* The stock headline is replaced by the greeting our block renders. */
+html[data-dsh-cc-skin] body :has(> [data-cc-hero]) > [class*="headline"] {
+  display: none !important;
+}
+
+html[data-dsh-cc-skin] .cc-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0;
+  padding: 4px 0 0;
+}
+
+html[data-dsh-cc-skin] .cc-greeting {
+  margin: 0;
+  color: var(--cc-text);
+  font-family: var(--cc-serif);
+  font-size: 27px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-align: center;
+}
+
+html[data-dsh-cc-skin] .cc-sub {
+  margin: 8px 0 0;
+  color: var(--cc-text-2);
+  font-family: var(--cc-sans);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+html[data-dsh-cc-skin] .cc-card {
+  width: min(660px, calc(100% - 8px));
+  margin-top: 22px;
+  padding: 14px;
+  border: 1px solid var(--cc-line);
+  border-radius: var(--cc-radius-card);
+  background: var(--cc-card);
+  box-shadow: var(--cc-shadow);
+  font-family: var(--cc-sans);
+  box-sizing: border-box;
+}
+
+html[data-dsh-cc-skin] .cc-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+html[data-dsh-cc-skin] .cc-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--cc-tabbar);
+}
+
+html[data-dsh-cc-skin] .cc-tabs-end {
+  background: transparent;
+  padding: 0;
+}
+
+html[data-dsh-cc-skin] .cc-seg {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--cc-text-2);
+  font-family: var(--cc-sans);
+  font-size: 12px;
+  line-height: 1;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+html[data-dsh-cc-skin] .cc-seg:hover {
+  color: var(--cc-text);
+}
+
+html[data-dsh-cc-skin] .cc-seg.is-on {
+  background: var(--cc-elev);
+  color: var(--cc-text);
+  box-shadow: var(--cc-shadow);
+}
+
+html[data-dsh-cc-skin] .cc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  min-height: 92px;
+}
+
+html[data-dsh-cc-skin] .cc-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--cc-tile);
+}
+
+html[data-dsh-cc-skin] .cc-tile-k {
+  color: var(--cc-text-3);
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-dsh-cc-skin] .cc-tile-v {
+  color: var(--cc-text);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-dsh-cc-skin] .cc-models {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+html[data-dsh-cc-skin] .cc-model-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--cc-tile);
+  font-size: 12.5px;
+}
+
+html[data-dsh-cc-skin] .cc-model-name {
+  color: var(--cc-text);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-dsh-cc-skin] .cc-model-meta,
+html[data-dsh-cc-skin] .cc-model-tokens {
+  color: var(--cc-text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-dsh-cc-skin] .cc-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 28px 10px;
+  color: var(--cc-text-3);
+  font-size: 12.5px;
+  text-align: center;
+}
+
+html[data-dsh-cc-skin] .cc-heat {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 10px);
+  gap: 3px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+html[data-dsh-cc-skin] .cc-heat-cell {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--cc-heat-0);
+}
+
+html[data-dsh-cc-skin] .cc-heat-cell.is-1 {
+  background: var(--cc-heat-1);
+}
+html[data-dsh-cc-skin] .cc-heat-cell.is-2 {
+  background: var(--cc-heat-2);
+}
+html[data-dsh-cc-skin] .cc-heat-cell.is-3 {
+  background: var(--cc-heat-3);
+}
+
+/* A ring rather than a colour change: the cell still has to read as its level.
+   The ring is inset because the grid is `overflow: hidden` — an outline drawn
+   outside the box is clipped for the cells on the grid's outer edge. */
+html[data-dsh-cc-skin] .cc-heat-cell:hover,
+html[data-dsh-cc-skin] .cc-heat-cell:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--cc-text-3);
+}
+
+html[data-dsh-cc-skin] .cc-heat-cell[tabindex]:hover,
+html[data-dsh-cc-skin] .cc-heat-cell[tabindex]:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--cc-text);
+  cursor: pointer;
+}
+
+/* The per-day readout. One node for the whole grid, parked on <body> and
+   positioned by script, so it escapes the card's clipping and the heat grid's
+   `overflow: hidden`. */
+html[data-dsh-cc-skin] .cc-heat-tip {
+  position: fixed;
+  z-index: 9999;
+  display: none;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  border: 1px solid var(--cc-line);
+  border-radius: 8px;
+  background: var(--cc-elev);
+  color: var(--cc-text);
+  box-shadow: var(--cc-shadow-lg);
+  font-family: var(--cc-sans);
+  font-size: 12px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+html[data-dsh-cc-skin] .cc-heat-tip.is-on {
+  display: block;
+}
+
+html[data-dsh-cc-skin] .cc-heat-tip > * {
+  display: block;
+}
+
+html[data-dsh-cc-skin] .cc-heat-tip-day {
+  color: var(--cc-text-3);
+  font-size: 11px;
+}
+
+html[data-dsh-cc-skin] .cc-heat-tip-tokens {
+  margin-top: 1px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+html[data-dsh-cc-skin] .cc-heat-tip-meta,
+html[data-dsh-cc-skin] .cc-heat-tip-none {
+  margin-top: 1px;
+  color: var(--cc-text-3);
+  font-size: 11px;
+}
+
+html[data-dsh-cc-skin] .cc-foot {
+  margin: 12px 0 0;
+  color: var(--cc-text-3);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   Final touch-ups that belong with the shell rather than the card
+   -------------------------------------------------------------------------- */
+
+/* Flat sidebar action: the stock primary button is a bordered box, which reads
+   as a second frame inside the column. */
+html[data-dsh-cc-skin] body [data-slot="sidebar"] button[class*="newSession"] {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--cc-text) !important;
+  font-weight: 500 !important;
+  justify-content: flex-start !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body [data-slot="sidebar"] button[class*="newSession"]:hover {
+  background: var(--cc-hover) !important;
+}
+
+/* The hero composer keeps the card width, not the column width. */
+html[data-dsh-cc-skin] body [class*="composerHero"] {
+  width: min(760px, calc(100% - 32px)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* The release badge on the model label is product chrome, not part of the look. */
+html[data-dsh-cc-skin] body [data-slot="conversation.input.model.label"] [class*="_tag_"] {
+  display: none !important;
+}
+
+/* The send control: a neutral filled circle instead of the blue accent. */
+html[data-dsh-cc-skin] body [data-composer-card] button[class*="primary"] {
+  background: var(--cc-text) !important;
+  background-image: none !important;
+  border: 0 !important;
+  color: var(--cc-bg) !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body [data-composer-card] button[class*="primary"]:hover {
+  background: var(--cc-text-2) !important;
+}
+
+/* Reasoning previews are quiet text, never a card. */
+html[data-dsh-cc-skin] body [data-variant="think"],
+html[data-dsh-cc-skin] body [data-variant="think"] * {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html[data-dsh-cc-skin] body [data-variant="think"],
+html[data-dsh-cc-skin] body [data-variant="think"] > *,
+html[data-dsh-cc-skin] body [data-variant="think"] [class*="_root_"] {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+html[data-dsh-cc-skin] body [data-variant="think"] [data-disclosure-row] {
+  border-left: 2px solid var(--cc-line) !important;
+  border-radius: 0 !important;
+  padding-left: 12px !important;
+  color: var(--cc-text-3) !important;
+  font-size: 13px !important;
+}
+html[data-dsh-cc-skin] body [data-variant="think"] [class*="_title_"] {
+  color: var(--cc-text-3) !important;
+  font-style: normal !important;
+}
+html[data-dsh-cc-skin] body [data-variant="think"] button {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--cc-text-3) !important;
+}
+
+/* The chosen range keeps a hairline, as in the reference. */
+html[data-dsh-cc-skin] .cc-seg.is-on {
+  box-shadow: inset 0 0 0 1px var(--cc-line), var(--cc-shadow);
+}
+
+/* Heat cells keep their square ratio while the grid fills the card. */
+html[data-dsh-cc-skin] .cc-heat {
+  grid-template-rows: repeat(7, auto);
+  grid-auto-columns: 1fr;
+  gap: 3px;
+}
+html[data-dsh-cc-skin] .cc-heat-cell {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+/* A collapsed right sidebar must not keep its width. The stock panel keeps its
+   inline width while the shell marks it collapsed (aria-hidden), which leaves a
+   full-width empty box on screen with its own controls pushed out of view. */
+html[data-dsh-cc-skin] body [data-rightbar-collapsed="true"] [data-sidebar-right-panel] {
+  display: none !important;
+}
+
+/* ==========================================================================
+   9. Motion preferences
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-dsh-cc-skin] .cc-seg {
+    transition: none;
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+*.bak-claude-code-skin
+*.log
+.DS_Store
+Thumbs.db

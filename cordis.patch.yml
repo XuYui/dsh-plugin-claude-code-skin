@@ -1,0 +1,12 @@
+# dsh-plugin-claude-code-skin bundle patch.
+#
+# One row: the skin plugin. Its host half is a no-op (apply() {}); the browser
+# half is the package's ./client export, which client-modules serves at
+# /plugins/dsh-plugin-claude-code-skin/client.js and the page applies on boot.
+#
+# Toggle the skin off without uninstalling it by setting `disabled: true` here
+# (or from Settings → Plugins), or keep it installed and flip the row off in
+# the profile's cordis.patch.yml.
+- insert:
+    - id: claude-code-skin
+      name: 'dsh-plugin-claude-code-skin'

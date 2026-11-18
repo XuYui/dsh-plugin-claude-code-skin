@@ -1,0 +1,47 @@
+{
+  "name": "dsh-plugin-claude-code-skin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Claude Code 风格的 DSH 界面皮肤：终端质感、等宽字体、⏺ / ⎿ / ✻ 行首符号与珊瑚色强调",
+  "type": "module",
+  "author": "XuYui",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XuYui/dsh-plugin-claude-code-skin.git"
+  },
+  "homepage": "https://github.com/XuYui/dsh-plugin-claude-code-skin#readme",
+  "bugs": {
+    "url": "https://github.com/XuYui/dsh-plugin-claude-code-skin/issues"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "skin",
+    "theme",
+    "claude-code"
+  ],
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./skin.css": "./lib/skin.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "lib/skin.css",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "license": "MIT"
+}
